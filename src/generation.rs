@@ -112,20 +112,8 @@ mod execution {
             SeedMode::Disk => handle_disk_collection(datasets),
         }
     }
-    async fn handle_dynamic_mode(_datasets: Vec<DataSet>, uri: String) {
-        let db: mongodb::Database = match database::establish_connection(uri).await {
-            Ok(db) => db,
-            Err(e) => panic!("Error connecting to MongoDB: {}", e),
-        };
-        println!("About to fetch collection names");
-        // List the names of the databases in that deployment.
-        let collection_names = match db.list_collection_names(None).await {
-            Ok(names) => names,
-            Err(e) => panic!("Error listing collections: {}", e),
-        };
-        for db_name in collection_names {
-            println!("{}", db_name);
-        }
+    async fn handle_dynamic_mode(_datasets: Vec<DataSet>, _uri: String) {
+        panic!("Dynamic mode not implemented yet");
     }
     fn handle_disk_collection(datasets: Vec<DataSet>) {
         let collections = convert_collections(&datasets);
@@ -138,19 +126,5 @@ mod execution {
                     collection,
                 )
             });
-    }
-}
-
-mod database {
-    use mongodb::Client;
-
-    pub async fn establish_connection(
-        uri: String,
-    ) -> Result<mongodb::Database, mongodb::error::Error> {
-        let client = Client::with_uri_str(uri).await?;
-
-        let db = client.database("test");
-        println!("Connected to MongoDB - {}", db.name());
-        return Ok(db);
     }
 }
