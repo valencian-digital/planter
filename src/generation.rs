@@ -41,9 +41,9 @@ pub mod seeding {
     use super::*;
     use std::string::String;
 
-    pub fn seed_data(names: Vec<String>, generators: Vec<EntityGenerator>, config: Configurations) {
-        let datasets = generation::generate_collections(names, generators, config.amount);
-        execution::update_collections(datasets, config.mode);
+    pub fn seed_data(collections: Vec<(String, EntityGenerator)>, config: Configurations) {
+        let datasets = generation::generate_collections(collections, config.amount);
+        execution::update_collections(datasets, config);
     }
 }
 
@@ -61,16 +61,15 @@ mod generation {
     }
 
     pub fn generate_collections(
-        names: Vec<String>,
-        generators: Vec<EntityGenerator>,
+        collection_definition: Vec<(String, EntityGenerator)>,
         amount: i32,
     ) -> Vec<DataSet> {
         let now = Instant::now();
-        let entity_generators = names.into_iter().zip(generators.into_iter());
-        let datasets = entity_generators
+        let datasets = collection_definition
+            .iter()
             .map(|(key, generator)| DataSet {
-                collection_name: key,
-                output: generate_collection(generator, amount as usize),
+                collection_name: key.to_string(),
+                output: generate_collection(*generator, amount as usize),
             })
             .collect();
         println!("Data Generation Time - {:?}", now.elapsed());
@@ -82,7 +81,7 @@ mod execution {
     use super::*;
     use std::fs;
     use std::time::Instant;
-
+    use tokio::runtime::Runtime;
     fn write_collection(name: String, collection: String) {
         let now = Instant::now();
         fs::write(name, collection).expect("An error ocurred while writing a collection");
@@ -105,13 +104,29 @@ mod execution {
         println!("Converting to JSON Time - {:?}", now.elapsed());
         return collections;
     }
-    pub fn update_collections(datasets: Vec<DataSet>, mode: SeedMode) {
-        match mode {
-            SeedMode::Dynamic => handle_dynamic_mode(datasets),
+    pub fn update_collections(datasets: Vec<DataSet>, config: Configurations) {
+        match config.mode {
+            SeedMode::Dynamic => Runtime::new()
+                .unwrap()
+                .block_on(handle_dynamic_mode(datasets, config.mongo_uri.unwrap())),
             SeedMode::Disk => handle_disk_collection(datasets),
         }
     }
-    fn handle_dynamic_mode(_datasets: Vec<DataSet>) {}
+    async fn handle_dynamic_mode(_datasets: Vec<DataSet>, uri: String) {
+        let db: mongodb::Database = match database::establish_connection(uri).await {
+            Ok(db) => db,
+            Err(e) => panic!("Error connecting to MongoDB: {}", e),
+        };
+        println!("About to fetch collection names");
+        // List the names of the databases in that deployment.
+        let collection_names = match db.list_collection_names(None).await {
+            Ok(names) => names,
+            Err(e) => panic!("Error listing collections: {}", e),
+        };
+        for db_name in collection_names {
+            println!("{}", db_name);
+        }
+    }
     fn handle_disk_collection(datasets: Vec<DataSet>) {
         let collections = convert_collections(&datasets);
         datasets
@@ -123,5 +138,19 @@ mod execution {
                     collection,
                 )
             });
+    }
+}
+
+mod database {
+    use mongodb::Client;
+
+    pub async fn establish_connection(
+        uri: String,
+    ) -> Result<mongodb::Database, mongodb::error::Error> {
+        let client = Client::with_uri_str(uri).await?;
+
+        let db = client.database("test");
+        println!("Connected to MongoDB - {}", db.name());
+        return Ok(db);
     }
 }

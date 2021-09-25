@@ -16,23 +16,19 @@ fn post_generator() -> bson::Document {
     };
 }
 fn main() {
-    let amount = 10000;
+    let amount = 100;
     let now = Instant::now();
-    let collections = vec![
-        String::from("users"),
-        String::from("posts"),
-        String::from("comments"),
-        String::from("communities"),
+    let collections: Vec<(String, generation::EntityGenerator)> = vec![
+        (String::from("users"), user_generator),
+        (String::from("posts"), post_generator),
+        (String::from("comments"), post_generator),
+        (String::from("communities"), post_generator),
     ];
-    let entity_generators: Vec<generation::EntityGenerator> = vec![
-        user_generator,
-        post_generator,
-        post_generator,
-        post_generator,
-    ];
+
+    let mongo_uri = std::env::var("MONGO_URI").unwrap_or(String::from(""));
+    println!("Mongo URI - {}", mongo_uri);
     generation::seeding::seed_data(
         collections,
-        entity_generators,
         generation::Configurations::new(amount, generation::SeedMode::Disk),
     );
 

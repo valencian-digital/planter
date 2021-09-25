@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "sleeping for 5 seconds before initialization"
-sleep 1
+sleep 5
 echo mongo_setup.sh time now: `date +"%T" `
 mongosh --host mongo:27017 <<EOF
   var cfg = {
@@ -10,7 +10,7 @@ mongosh --host mongo:27017 <<EOF
       {
         "_id": 0,
         "host": "mongo:27017",
-        "priority": 2
+        "priority": 1
       },
     ]
   };
