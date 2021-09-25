@@ -30,7 +30,7 @@ pub fn create_data(names: Vec<String>, generators: Vec<EntityGenerator>, amount:
         })
         .collect();
     println!("Data Generation Time - {:?}", now.elapsed());
-    write_files(datasets);
+    update_collections(datasets);
 }
 
 fn write_collection(name: String, collection: String) {
@@ -60,7 +60,7 @@ fn convert_collections(datasets: &Vec<DataSet>) -> Vec<String> {
     return collections;
 }
 
-fn write_files(datasets: Vec<DataSet>) {
+fn update_collections(datasets: Vec<DataSet>) {
     let collections = convert_collections(&datasets);
     datasets
         .into_iter()
