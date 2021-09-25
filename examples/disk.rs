@@ -1,5 +1,7 @@
 use bson::doc;
+use mongoseed;
 use std::time::Instant;
+
 fn user_generator() -> bson::Document {
     return doc! {
         "_id": bson::Bson::ObjectId(bson::oid::ObjectId::new()),
@@ -26,7 +28,7 @@ fn main() {
 
     let mongo_uri = std::env::var("MONGO_URI").unwrap_or(String::from(""));
     println!("Mongo URI - {}", mongo_uri);
-    mongoseed::seeding::seed_data(
+    mongoseed::seed_data(
         collections,
         mongoseed::Configurations::new(amount, mongoseed::SeedMode::Disk),
     );
