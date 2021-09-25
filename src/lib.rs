@@ -7,3 +7,4 @@ mod tests {
 }
 
 pub mod generation;
+pub use generation::*;
