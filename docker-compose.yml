@@ -1,0 +1,13 @@
+version: "3"
+services:
+  mongo:
+    image: "mongo:5.0"
+    ports:
+      - "27017:27017"
+    entrypoint: ["/usr/bin/mongod", "--bind_ip_all", "--replSet", "rs0"]
+  dbseed:
+    build:
+      dockerfile: Dockerfile.dev
+    links:
+      - mongo
+    env_file: ./.env.development

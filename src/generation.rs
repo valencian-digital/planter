@@ -25,7 +25,7 @@ pub fn create_data(names: Vec<String>, generators: Vec<EntityGenerator>, amount:
     let entity_generators = names.into_iter().zip(generators.into_iter());
     let datasets = entity_generators
         .map(|(key, generator)| DataSet {
-            filename: key.to_string() + ".json",
+            filename: String::from("./data/") + &key.to_string() + ".json",
             output: generate_collection(generator, amount as usize),
         })
         .collect();
