@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 use std::fs;
 use std::iter;
 use std::string::String;
@@ -14,7 +13,7 @@ struct DataSet {
 fn generate_collection(entity_generator: EntityGenerator, amount: usize) -> Vec<bson::Bson> {
     let collection: Vec<bson::Bson> = iter::repeat(entity_generator)
         .take(amount)
-        .map(|f| bson::to_bson(&f()).expect("Error ocurred while converting to bson"))
+        .map(|f| bson::Bson::from(f()))
         .collect();
 
     return collection;
@@ -23,13 +22,11 @@ fn generate_collection(entity_generator: EntityGenerator, amount: usize) -> Vec<
 pub fn create_data(names: Vec<String>, generators: Vec<EntityGenerator>, amount: i32) {
     let now = Instant::now();
 
-    let entity_generators: HashMap<String, EntityGenerator> =
-        names.into_iter().zip(generators.into_iter()).collect();
+    let entity_generators = names.into_iter().zip(generators.into_iter());
     let datasets = entity_generators
-        .keys()
-        .map(|key| DataSet {
+        .map(|(key, generator)| DataSet {
             filename: key.to_string() + ".json",
-            output: generate_collection(entity_generators[key], amount as usize),
+            output: generate_collection(generator, amount as usize),
         })
         .collect();
     println!("Data Generation Time - {:?}", now.elapsed());
