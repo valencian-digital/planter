@@ -15,7 +15,6 @@ fn post_generator() -> bson::Document {
         "text": "Hello World"
     };
 }
-
 fn main() {
     let amount = 10000;
     let now = Instant::now();
@@ -31,7 +30,11 @@ fn main() {
         post_generator,
         post_generator,
     ];
-    generation::create_data(collections, entity_generators, amount);
+    generation::seeding::seed_data(
+        collections,
+        entity_generators,
+        generation::Configurations::new(amount, generation::SeedMode::Disk),
+    );
 
     println!("Total Time - {:?}", now.elapsed());
 }
