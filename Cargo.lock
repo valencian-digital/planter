@@ -574,6 +574,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "mongoseed"
+version = "0.1.0"
+dependencies = [
+ "bson",
+ "mongodb",
+ "tokio",
+]
+
+[[package]]
 name = "ntapi"
 version = "0.3.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -799,15 +808,6 @@ dependencies = [
  "untrusted",
  "web-sys",
  "winapi",
-]
-
-[[package]]
-name = "rust-db-generation"
-version = "0.1.0"
-dependencies = [
- "bson",
- "mongodb",
- "tokio",
 ]
 
 [[package]]
