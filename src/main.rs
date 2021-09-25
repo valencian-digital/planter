@@ -1,46 +1,27 @@
-use std::collections::HashMap;
+mod generation;
+use bson::doc;
+use std::time::Instant;
 
-struct DataSet {
-    filename: String,
-    output: String,
-}
-type EntityGenerator = fn() -> String;
-
-fn user_generator() -> String {
-    return "Generating users".to_string();
-}
-
-fn post_generator() -> String {
-    return "Generating posts".to_string();
+fn user_generator() -> bson::Document {
+    return doc! {
+        "_id": bson::Bson::ObjectId(bson::oid::ObjectId::new()),
+        "name": "Jane Doe"
+    };
 }
 
-const COLLECTION_NAMES: [&str; 2] = ["users", "posts"];
-const ENTITY_GENERATORS: [EntityGenerator; 2] = [user_generator, post_generator];
+fn post_generator() -> bson::Document {
+    return doc! {
+        "_id": bson::Bson::ObjectId(bson::oid::ObjectId::new()),
+        "text": "Hello World"
+    };
+}
 
 fn main() {
-    let entity_generators: HashMap<&str, EntityGenerator> = COLLECTION_NAMES
-        .iter()
-        .map(|name| *name)
-        .zip(ENTITY_GENERATORS.iter().map(|gen| *gen))
-        .collect();
+    let amount = 10000;
+    let now = Instant::now();
+    let collections = vec![String::from("users"), String::from("posts")];
+    let entity_generators: Vec<generation::EntityGenerator> = vec![user_generator, post_generator];
+    generation::create_data(collections, entity_generators, amount);
 
-    let datasets = COLLECTION_NAMES
-        .iter()
-        .map(|name| DataSet {
-            filename: name.to_string() + ".json",
-            output: entity_generators[name](),
-        })
-        .collect::<Vec<DataSet>>();
-    write_files(datasets);
-}
-
-fn update_collection(dataset: &DataSet) {
-    println!("Updating collection {}", dataset.filename);
-    println!("{}", dataset.output);
-}
-
-fn write_files(datasets: Vec<DataSet>) {
-    datasets
-        .iter()
-        .for_each(|dataset| update_collection(dataset));
+    println!("{:?}", now.elapsed());
 }
