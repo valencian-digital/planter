@@ -23,5 +23,5 @@ fn main() {
     let entity_generators: Vec<generation::EntityGenerator> = vec![user_generator, post_generator];
     generation::create_data(collections, entity_generators, amount);
 
-    println!("{:?}", now.elapsed());
+    println!("Total Time - {:?}", now.elapsed());
 }

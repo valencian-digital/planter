@@ -2,6 +2,8 @@ use std::collections::HashMap;
 use std::fs;
 use std::iter;
 use std::string::String;
+use std::time::Instant;
+
 pub type EntityGenerator = fn() -> bson::Document;
 
 struct DataSet {
@@ -19,6 +21,8 @@ fn generate_collection(entity_generator: EntityGenerator, amount: usize) -> Vec<
 }
 
 pub fn create_data(names: Vec<String>, generators: Vec<EntityGenerator>, amount: i32) {
+    let now = Instant::now();
+
     let entity_generators: HashMap<String, EntityGenerator> =
         names.into_iter().zip(generators.into_iter()).collect();
     let datasets = entity_generators
@@ -28,6 +32,7 @@ pub fn create_data(names: Vec<String>, generators: Vec<EntityGenerator>, amount:
             output: generate_collection(entity_generators[key], amount as usize),
         })
         .collect();
+    println!("Data Generation Time - {:?}", now.elapsed());
     write_files(datasets);
 }
 
@@ -44,7 +49,10 @@ fn update_collection(dataset: &DataSet) {
 }
 
 fn write_files(datasets: Vec<DataSet>) {
+    let now = Instant::now();
+
     datasets
         .iter()
         .for_each(|dataset| update_collection(dataset));
+    println!("Writing Data Time - {:?}", now.elapsed());
 }
