@@ -19,8 +19,18 @@ fn post_generator() -> bson::Document {
 fn main() {
     let amount = 10000;
     let now = Instant::now();
-    let collections = vec![String::from("users"), String::from("posts")];
-    let entity_generators: Vec<generation::EntityGenerator> = vec![user_generator, post_generator];
+    let collections = vec![
+        String::from("users"),
+        String::from("posts"),
+        String::from("comments"),
+        String::from("communities"),
+    ];
+    let entity_generators: Vec<generation::EntityGenerator> = vec![
+        user_generator,
+        post_generator,
+        post_generator,
+        post_generator,
+    ];
     generation::create_data(collections, entity_generators, amount);
 
     println!("Total Time - {:?}", now.elapsed());

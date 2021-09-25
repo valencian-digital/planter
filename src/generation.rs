@@ -33,23 +33,37 @@ pub fn create_data(names: Vec<String>, generators: Vec<EntityGenerator>, amount:
     write_files(datasets);
 }
 
-fn update_collection(dataset: &DataSet) {
-    let output = dataset
-        .output
-        .iter()
-        .map(|doc| doc.clone().into_canonical_extjson().to_string())
-        .collect::<Vec<String>>();
+fn write_collection(name: String, collection: String) {
+    let now = Instant::now();
 
-    let final_output = String::from("[") + &output.join(",") + "]";
-    fs::write(dataset.filename.clone(), final_output)
-        .expect("An error ocurred while writing a collection");
+    fs::write(name, collection).expect("An error ocurred while writing a collection");
+    println!("Writing Data Time - {:?}", now.elapsed());
+}
+
+fn convert_collections(datasets: &Vec<DataSet>) -> Vec<String> {
+    let now = Instant::now();
+
+    let collections: Vec<String> = datasets
+        .iter()
+        .map(|dataset| {
+            let output = dataset
+                .output
+                .iter()
+                .map(|doc| doc.clone().into_canonical_extjson().to_string())
+                .collect::<Vec<String>>();
+
+            let final_output = String::from("[") + &output.join(",") + "]";
+            return final_output;
+        })
+        .collect();
+    println!("Converting to JSON Time - {:?}", now.elapsed());
+    return collections;
 }
 
 fn write_files(datasets: Vec<DataSet>) {
-    let now = Instant::now();
-
+    let collections = convert_collections(&datasets);
     datasets
-        .iter()
-        .for_each(|dataset| update_collection(dataset));
-    println!("Writing Data Time - {:?}", now.elapsed());
+        .into_iter()
+        .zip(collections.into_iter())
+        .for_each(|(datasets, collection)| write_collection(datasets.filename, collection));
 }
