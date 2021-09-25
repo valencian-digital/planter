@@ -7,4 +7,5 @@ version = "0.1.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+bson = "2.0.0"
 mongoseed = {git = "https://github.com/valencian-digital/mongoseed", branch = "main"}# from online repo
