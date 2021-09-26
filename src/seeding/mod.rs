@@ -7,7 +7,8 @@ pub mod seeding {
     // Takes vector of tuples where each item in the vector will be used to define that given collection.
     // The generator will be trigerred N times where N is the amount specified in teh config struct passed in.
     pub fn seed_data(collections: Vec<(String, EntityGenerator)>, config: Configurations) {
-        let datasets = generation::generate_collections(collections, config.amount);
+        let datasets =
+            generation::generate_collections(collections, config.documents_per_collection);
         execution::update_collections(datasets, config);
     }
 }
@@ -36,13 +37,15 @@ mod generation {
         let mut history: GeneratedData = HashMap::new();
 
         let now = Instant::now();
-        collection_definition.iter().for_each(|(key, generator)| {
-            let callback_closure = || -> bson::Document {
-                return generator(&history);
-            };
-            let generated_collection = generate_collection(&callback_closure, amount as usize);
-            history.insert(key.to_string(), generated_collection);
-        });
+        collection_definition
+            .into_iter()
+            .for_each(|(key, generator)| {
+                let callback_closure = || -> bson::Document {
+                    return generator(&history);
+                };
+                let generated_collection = generate_collection(&callback_closure, amount as usize);
+                history.insert(key, generated_collection);
+            });
         println!("Data Generation Time - {:?}", now.elapsed());
         return history;
     }

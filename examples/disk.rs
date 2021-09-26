@@ -26,7 +26,7 @@ fn company_generator(_history: &planter::GeneratedData) -> bson::Document {
 }
 
 fn main() {
-    let amount = 100000;
+    let documents_per_collection: i32 = 10000;
     let now = Instant::now();
     let collections: Vec<(String, planter::EntityGenerator)> = vec![
         (String::from("users"), user_generator),
@@ -36,9 +36,14 @@ fn main() {
         (String::from("chat"), company_generator),
     ];
 
+    println!(
+        "Generating {} documents",
+        documents_per_collection * collections.len() as i32
+    );
+
     planter::seed_data(
         collections,
-        planter::Configurations::new(amount, planter::SeedMode::Disk),
+        planter::Configurations::new(documents_per_collection, planter::SeedMode::Disk),
     );
 
     println!("Total Time - {:?}", now.elapsed());

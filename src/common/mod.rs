@@ -17,25 +17,29 @@ pub enum SeedMode {
 
 #[derive(Debug)]
 pub struct Configurations {
-    pub amount: i32,
+    pub documents_per_collection: i32,
     pub mode: SeedMode,
     pub mongo_uri: Option<String>,
 }
 impl Configurations {
-    pub fn new(amount: i32, mode: SeedMode) -> Configurations {
+    pub fn new(documents_per_collection: i32, mode: SeedMode) -> Configurations {
         match mode {
             SeedMode::Dynamic => panic!("Dynamic seed mode not implemented yet"),
             SeedMode::Disk => Configurations {
-                amount,
+                documents_per_collection,
                 mode,
                 mongo_uri: None,
             },
         }
     }
-    pub fn new_dynamic(amount: i32, mode: SeedMode, mongo_uri: String) -> Configurations {
+    pub fn new_dynamic(
+        documents_per_collection: i32,
+        mode: SeedMode,
+        mongo_uri: String,
+    ) -> Configurations {
         match mode {
             SeedMode::Dynamic => Configurations {
-                amount,
+                documents_per_collection,
                 mode,
                 mongo_uri: Some(mongo_uri),
             },
