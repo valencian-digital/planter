@@ -1,15 +1,15 @@
 use bson::doc;
-use mongoseed;
+use planter;
 use std::time::Instant;
 
-fn user_generator(_history: &mongoseed::GeneratedData) -> bson::Document {
+fn user_generator(_history: &planter::GeneratedData) -> bson::Document {
     return doc! {
         "_id": bson::Bson::ObjectId(bson::oid::ObjectId::new()),
         "name": "Jane Doe"
     };
 }
 
-fn post_generator(_history: &mongoseed::GeneratedData) -> bson::Document {
+fn post_generator(_history: &planter::GeneratedData) -> bson::Document {
     return doc! {
         "_id": bson::Bson::ObjectId(bson::oid::ObjectId::new()),
         "text": "Hello World"
@@ -19,7 +19,7 @@ fn post_generator(_history: &mongoseed::GeneratedData) -> bson::Document {
 fn main() {
     let amount = 10000;
     let now = Instant::now();
-    let collections: Vec<(String, mongoseed::EntityGenerator)> = vec![
+    let collections: Vec<(String, planter::EntityGenerator)> = vec![
         (String::from("users"), user_generator),
         (String::from("posts"), post_generator),
         (String::from("comments"), post_generator),
