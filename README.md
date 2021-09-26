@@ -13,14 +13,17 @@ planter = {git = "https://github.com/valencian-digital/planter", branch = "main"
 ## Usage
 
 ```rust
+fn user_generator(_history: &planter::GeneratedData) -> bson::Document {
+    return doc! {
+        "_id": bson::Bson::ObjectId(bson::oid::ObjectId::new()),
+        "name": "Jane Doe"
+    };
+}
+
 let amount = 1000;
 let now = Instant::now();
 let collections: Vec<(String, planter::EntityGenerator)> = vec![
     (String::from("users"), user_generator),
-    (String::from("posts"), company_generator),
-    (String::from("comments"), company_generator),
-    (String::from("communities"), company_generator),
-    (String::from("chat"), company_generator),
 ];
 
 planter::seed_data(
