@@ -26,10 +26,8 @@ fn main() {
         (String::from("communities"), post_generator),
     ];
 
-    mongoseed::seed_data(
-        collections,
-        mongoseed::Configurations::new(amount, mongoseed::SeedMode::Disk),
-    );
+    let mongo_uri = std::env::var("MONGO_URI").unwrap_or(String::from(""));
+    println!("Mongo URI - {}", mongo_uri);
 
     println!("Total Time - {:?}", now.elapsed());
 }
