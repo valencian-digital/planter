@@ -1,4 +1,4 @@
-# MongoSeed
+# Planter
 Blazingly fast and simple data generation & seeding for MongoDB
 
 
