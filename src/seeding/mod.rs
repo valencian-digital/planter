@@ -39,7 +39,7 @@ mod generation {
                 return generator(&history);
             };
             let generated_collection = generate_collection(&callback_closure, amount as usize);
-            history.insert(key.to_string(), generated_collection.clone());
+            history.insert(key.to_string(), generated_collection);
         });
         println!("Data Generation Time - {:?}", now.elapsed());
         return history;
