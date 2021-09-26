@@ -4,7 +4,7 @@ Blazingly fast and simple data generation & seeding for MongoDB
 
 ## Installation
 
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
+Use the package manager [cargo](https://pip.pypa.io/en/stable/) to install planter.
 Add the following to your Cargo.toml
 ```toml
 [dependencies]
@@ -12,17 +12,21 @@ planter = {git = "https://github.com/valencian-digital/planter", branch = "main"
 ```
 ## Usage
 
-```python
-import foobar
+```rust
+let amount = 1000;
+let now = Instant::now();
+let collections: Vec<(String, planter::EntityGenerator)> = vec![
+    (String::from("users"), user_generator),
+    (String::from("posts"), company_generator),
+    (String::from("comments"), company_generator),
+    (String::from("communities"), company_generator),
+    (String::from("chat"), company_generator),
+];
 
-# returns 'words'
-foobar.pluralize('word')
-
-# returns 'geese'
-foobar.pluralize('goose')
-
-# returns 'phenomenon'
-foobar.singularize('phenomena')
+planter::seed_data(
+    collections,
+    planter::Configurations::new(amount, planter::SeedMode::Disk),
+);
 ```
 
 ## Contributing

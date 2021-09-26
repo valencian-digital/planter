@@ -39,6 +39,6 @@ pub mod execution {
         datasets.into_iter().for_each(|(key, output)| {
             write_collection(create_filepath(key), convert_collection(output))
         });
-        println!("Disk Execution Data Time - {:?}", now.elapsed());
+        println!("Disk Execution Time - {:?}", now.elapsed());
     }
 }

@@ -9,21 +9,31 @@ fn user_generator(_history: &planter::GeneratedData) -> bson::Document {
     };
 }
 
-fn post_generator(_history: &planter::GeneratedData) -> bson::Document {
+fn company_generator(_history: &planter::GeneratedData) -> bson::Document {
     return doc! {
         "_id": bson::Bson::ObjectId(bson::oid::ObjectId::new()),
-        "text": "Hello World"
+        "name": "Hello World",
+        "location": "United States of America",
+        "companySize": "1-10",
+        "sector": bson::Bson::Array(vec![bson::Bson::String("Software".to_string())]),
+        "website": "valenciandigital.com",
+        "foundationDate": bson::DateTime::now(),
+        "regionsCovered": bson::Bson::Array(vec![bson::Bson::String("Global".to_string())]),
+        "rating": bson::Bson::Double(4.2),
+        "totalReviews": bson::Bson::Int32(10),
+        "contactEmail": "hello@vcompany_generatorl.com"
     };
 }
 
 fn main() {
-    let amount = 50000;
+    let amount = 1000;
     let now = Instant::now();
     let collections: Vec<(String, planter::EntityGenerator)> = vec![
         (String::from("users"), user_generator),
-        (String::from("posts"), post_generator),
-        (String::from("comments"), post_generator),
-        (String::from("communities"), post_generator),
+        (String::from("posts"), company_generator),
+        (String::from("comments"), company_generator),
+        (String::from("communities"), company_generator),
+        (String::from("chat"), company_generator),
     ];
 
     planter::seed_data(
