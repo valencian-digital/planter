@@ -26,7 +26,7 @@ fn company_generator(_history: &planter::GeneratedData) -> bson::Document {
 }
 
 fn main() {
-    let amount = 1000;
+    let amount = 100000;
     let now = Instant::now();
     let collections: Vec<(String, planter::EntityGenerator)> = vec![
         (String::from("users"), user_generator),

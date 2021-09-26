@@ -13,16 +13,23 @@ pub mod execution {
         }
     }
     fn write_collection(name: String, collection: Vec<u8>) {
-        fs::write(name, collection).expect("An error ocurred while writing a collection");
+        let now = Instant::now();
+        fs::write(name.as_str(), collection).expect("An error ocurred while writing a collection");
+        println!(
+            "Writing Collection Time for {} - {:?}",
+            name.as_str(),
+            now.elapsed()
+        );
     }
 
     fn convert_collection(data: Vec<bson::Document>) -> Vec<u8> {
+        let now = Instant::now();
         let mut bytes = vec![];
         data.into_iter().for_each(|doc| {
             doc.to_writer(&mut bytes)
                 .expect("Error writing to byte array")
         });
-
+        println!("Collection Conversion Time - {:?}", now.elapsed());
         return bytes;
     }
 
