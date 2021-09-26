@@ -22,14 +22,14 @@ fn user_generator(_history: &planter::GeneratedData) -> bson::Document {
 
 ...
 
-let amount = 1000;
+let documents_per_collection = 1000;
 let collections: Vec<(String, planter::EntityGenerator)> = vec![
     (String::from("users"), user_generator),
 ];
 
 planter::seed_data(
     collections,
-    planter::Configurations::new(amount, planter::SeedMode::Disk),
+    planter::Configurations::new(documents_per_collection, planter::SeedMode::Disk),
 );
 ```
 
