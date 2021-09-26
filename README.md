@@ -8,7 +8,7 @@ Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
 Add the following to your Cargo.toml
 ```toml
 [dependencies]
-mongoseed = {git = "https://github.com/valencian-digital/mongoseed", branch = "main"}# from online repo```
+mongoseed = {git = "https://github.com/valencian-digital/planter", branch = "main"}# from online repo```
 ```
 ## Usage
 
