@@ -5,11 +5,11 @@ Blazingly fast and simple data generation & seeding for MongoDB
 ## Installation
 
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
-
-```bash
-pip install foobar
+Add the following to your Cargo.toml
+```toml
+[dependencies]
+mongoseed = {git = "https://github.com/valencian-digital/mongoseed", branch = "main"}# from online repo```
 ```
-
 ## Usage
 
 ```python
