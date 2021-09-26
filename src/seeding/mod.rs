@@ -12,10 +12,14 @@ pub mod seeding {
 
 mod generation {
     use crate::common::*;
+    use std::collections::HashMap;
     use std::iter;
     use std::time::Instant;
 
-    fn generate_collection(entity_generator: EntityGenerator, amount: usize) -> Vec<bson::Bson> {
+    fn generate_collection<T>(entity_generator: &T, amount: usize) -> Vec<bson::Bson>
+    where
+        T: Fn() -> bson::Document,
+    {
         let collection: Vec<bson::Bson> = iter::repeat(entity_generator)
             .take(amount)
             .map(|f| bson::Bson::from(f()))
@@ -26,16 +30,18 @@ mod generation {
     pub fn generate_collections(
         collection_definition: Vec<(String, EntityGenerator)>,
         amount: i32,
-    ) -> Vec<DataSet> {
+    ) -> GeneratedData {
+        let mut history: GeneratedData = HashMap::new();
+
         let now = Instant::now();
-        let datasets = collection_definition
-            .iter()
-            .map(|(key, generator)| DataSet {
-                collection_name: key.to_string(),
-                output: generate_collection(*generator, amount as usize),
-            })
-            .collect();
+        collection_definition.iter().for_each(|(key, generator)| {
+            let callback_closure = || -> bson::Document {
+                return generator(&history);
+            };
+            let generated_collection = generate_collection(&callback_closure, amount as usize);
+            history.insert(key.to_string(), generated_collection.clone());
+        });
         println!("Data Generation Time - {:?}", now.elapsed());
-        return datasets;
+        return history;
     }
 }

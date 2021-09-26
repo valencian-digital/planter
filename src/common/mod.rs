@@ -1,4 +1,7 @@
-pub type EntityGenerator = fn() -> bson::Document;
+use std::collections::HashMap;
+
+pub type GeneratedData = HashMap<String, Vec<bson::Bson>>;
+pub type EntityGenerator = fn(history: &GeneratedData) -> bson::Document;
 
 pub struct DataSet {
     pub collection_name: String,
