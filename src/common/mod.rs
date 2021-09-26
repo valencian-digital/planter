@@ -3,14 +3,19 @@ use std::collections::HashMap;
 pub type GeneratedData = HashMap<String, Vec<bson::Document>>;
 pub type EntityGenerator = fn(history: &GeneratedData) -> bson::Document;
 
+#[derive(Debug)]
 pub struct DataSet {
     pub collection_name: String,
     pub output: Vec<bson::Bson>,
 }
+
+#[derive(Debug)]
 pub enum SeedMode {
     Dynamic,
     Disk,
 }
+
+#[derive(Debug)]
 pub struct Configurations {
     pub amount: i32,
     pub mode: SeedMode,

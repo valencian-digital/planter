@@ -4,6 +4,8 @@ pub mod seeding {
     use crate::execution::execution;
     use std::string::String;
 
+    // Takes vector of tuples where each item in the vector will be used to define that given collection.
+    // The generator will be trigerred N times where N is the amount specified in teh config struct passed in.
     pub fn seed_data(collections: Vec<(String, EntityGenerator)>, config: Configurations) {
         let datasets = generation::generate_collections(collections, config.amount);
         execution::update_collections(datasets, config);
