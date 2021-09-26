@@ -16,13 +16,13 @@ mod generation {
     use std::iter;
     use std::time::Instant;
 
-    fn generate_collection<T>(entity_generator: &T, amount: usize) -> Vec<bson::Bson>
+    fn generate_collection<T>(entity_generator: &T, amount: usize) -> Vec<bson::Document>
     where
         T: Fn() -> bson::Document,
     {
-        let collection: Vec<bson::Bson> = iter::repeat(entity_generator)
+        let collection: Vec<bson::Document> = iter::repeat(entity_generator)
             .take(amount)
-            .map(|f| bson::Bson::from(f()))
+            .map(|f| f())
             .collect();
         return collection;
     }

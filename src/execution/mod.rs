@@ -12,23 +12,22 @@ pub mod execution {
             SeedMode::Disk => handle_disk_collection(datasets),
         }
     }
-    fn write_collection(name: String, collection: String) {
-        let now = Instant::now();
+    fn write_collection(name: String, collection: Vec<u8>) {
         fs::write(name, collection).expect("An error ocurred while writing a collection");
-        println!("Writing Data Time - {:?}", now.elapsed());
     }
 
-    fn convert_collection(data: Vec<bson::Bson>) -> String {
-        let output = data
-            .into_iter()
-            .map(|doc| doc.into_canonical_extjson().to_string())
-            .collect::<Vec<String>>();
-        let final_output = String::from("[") + &output.join(",") + "]";
-        return final_output;
+    fn convert_collection(data: Vec<bson::Document>) -> Vec<u8> {
+        let mut bytes = vec![];
+        data.into_iter().for_each(|doc| {
+            doc.to_writer(&mut bytes)
+                .expect("Error writing to byte array")
+        });
+
+        return bytes;
     }
 
     fn create_filepath(collection_name: String) -> String {
-        return String::from("./data/") + &collection_name + ".json";
+        return String::from("./data/") + &collection_name + ".bson";
     }
 
     async fn handle_dynamic_mode(_datasets: GeneratedData, _uri: String) {
@@ -36,8 +35,10 @@ pub mod execution {
     }
 
     fn handle_disk_collection(datasets: GeneratedData) {
+        let now = Instant::now();
         datasets.into_iter().for_each(|(key, output)| {
             write_collection(create_filepath(key), convert_collection(output))
         });
+        println!("Disk Execution Data Time - {:?}", now.elapsed());
     }
 }

@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-pub type GeneratedData = HashMap<String, Vec<bson::Bson>>;
+pub type GeneratedData = HashMap<String, Vec<bson::Document>>;
 pub type EntityGenerator = fn(history: &GeneratedData) -> bson::Document;
 
 pub struct DataSet {
