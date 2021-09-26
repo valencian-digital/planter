@@ -12,5 +12,4 @@ version = "0.1.0"
 
 [dependencies]
 bson = "2.0.0"
-mongodb = "2.0.0"
-tokio = "1.4.0"
+rayon = "1.5"

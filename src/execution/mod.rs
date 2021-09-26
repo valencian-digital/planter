@@ -1,14 +1,12 @@
 pub mod execution {
     use crate::common::*;
+    use rayon::prelude::*;
     use std::fs;
     use std::time::Instant;
-    use tokio::runtime::Runtime;
 
     pub fn update_collections(datasets: GeneratedData, config: Configurations) {
         match config.mode {
-            SeedMode::Dynamic => Runtime::new()
-                .unwrap()
-                .block_on(handle_dynamic_mode(datasets, config.mongo_uri.unwrap())),
+            SeedMode::Dynamic => handle_dynamic_mode(datasets, config.mongo_uri.unwrap()),
             SeedMode::Disk => handle_disk_collection(datasets),
         }
     }
@@ -22,7 +20,7 @@ pub mod execution {
         );
     }
 
-    fn convert_collection(data: Vec<bson::Document>) -> Vec<u8> {
+    fn convert_collection(data: &Vec<bson::Document>) -> Vec<u8> {
         let now = Instant::now();
         let mut bytes = vec![];
         data.into_iter().for_each(|doc| {
@@ -37,14 +35,14 @@ pub mod execution {
         return String::from("./data/") + &collection_name + ".bson";
     }
 
-    async fn handle_dynamic_mode(_datasets: GeneratedData, _uri: String) {
+    fn handle_dynamic_mode(_datasets: GeneratedData, _uri: String) {
         panic!("Dynamic mode not implemented yet");
     }
 
     fn handle_disk_collection(datasets: GeneratedData) {
         let now = Instant::now();
-        datasets.into_iter().for_each(|(key, output)| {
-            write_collection(create_filepath(key), convert_collection(output))
+        datasets.par_iter().for_each(|(key, output)| {
+            write_collection(create_filepath(key.to_string()), convert_collection(output))
         });
         println!("Disk Execution Time - {:?}", now.elapsed());
     }
