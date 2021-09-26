@@ -15,18 +15,19 @@ pub mod seeding {
 
 mod generation {
     use crate::common::*;
+    use rayon::prelude::*;
     use std::collections::HashMap;
-    use std::iter;
     use std::time::Instant;
 
-    fn generate_collection<T>(entity_generator: &T, amount: usize) -> Vec<bson::Document>
-    where
-        T: Fn() -> bson::Document,
-    {
-        let collection: Vec<bson::Document> = iter::repeat(entity_generator)
-            .take(amount)
-            .map(|f| f())
+    fn generate_collection(
+        entity_generator: EntityGenerator,
+        history: &GeneratedData,
+        amount: usize,
+    ) -> Vec<bson::Document> {
+        let collection: Vec<bson::Document> = rayon::iter::repeatn(entity_generator, amount)
+            .map(|f| f(history))
             .collect();
+
         return collection;
     }
 
@@ -40,10 +41,8 @@ mod generation {
         collection_definition
             .into_iter()
             .for_each(|(key, generator)| {
-                let callback_closure = || -> bson::Document {
-                    return generator(&history);
-                };
-                let generated_collection = generate_collection(&callback_closure, amount as usize);
+                let generated_collection =
+                    generate_collection(generator, &history, amount as usize);
                 history.insert(key, generated_collection);
             });
         println!("Data Generation Time - {:?}", now.elapsed());
