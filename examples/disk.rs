@@ -21,7 +21,7 @@ fn company_generator(_history: &planter::GeneratedData) -> bson::Document {
         "regionsCovered": bson::Bson::Array(vec![bson::Bson::String("Global".to_string())]),
         "rating": bson::Bson::Double(4.2),
         "totalReviews": bson::Bson::Int32(10),
-        "contactEmail": "hello@vcompany_generatorl.com"
+        "contactEmail": "hello@valenciandigital.com"
     };
 }
 

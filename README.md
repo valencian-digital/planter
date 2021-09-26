@@ -32,6 +32,12 @@ planter::seed_data(
 );
 ```
 
+Then to import that data into your running MongoDB database, execute the following command:
+```bash
+mongorestore --db=test data/
+```
+Look at the [mongorestore](https://docs.mongodb.com/database-tools/mongorestore/#std-label-mongorestore-examples) documentation in order to see all of options
+
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
