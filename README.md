@@ -23,7 +23,6 @@ fn user_generator(_history: &planter::GeneratedData) -> bson::Document {
 ...
 
 let amount = 1000;
-let now = Instant::now();
 let collections: Vec<(String, planter::EntityGenerator)> = vec![
     (String::from("users"), user_generator),
 ];
