@@ -41,8 +41,15 @@ mod generation {
         collection_definition
             .into_iter()
             .for_each(|(key, generator)| {
+                let coll_now = Instant::now();
                 let generated_collection =
                     generate_collection(generator, &history, amount as usize);
+                println!(
+                    "Collection {} Generation Time - {:?}",
+                    key,
+                    coll_now.elapsed()
+                );
+
                 history.insert(key, generated_collection);
             });
         println!("Data Generation Time - {:?}", now.elapsed());
